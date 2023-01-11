@@ -5,19 +5,18 @@ using namespace std;
 
 template<class T>
 class bheap{
-public:
     T *arr;
-    int arrSize{1024};
+    int arrSize{16};
     int arrSizeMultipl{2};
     int usedSize{0};
-
+public:
     bheap(){
         arr = new T[arrSize];
     }
     ~bheap(){
         delete[]arr;
     }
-
+private:
     void expand(){
         arrSize *= arrSizeMultipl;
         T* temp = new T[arrSize];
@@ -46,7 +45,23 @@ public:
         *b = temp;
     }
 
-    void add(int data){
+    void heapify(int siz, int index){
+        int temp = index;
+
+        int l = getLChild(index);
+        int r = getRChild(index);
+
+        if(l < siz && arr[l] > arr[temp])
+            temp = l;
+        if(r < siz && arr[r] > arr[temp])
+            temp = r;
+        if(temp != index){
+            swapPtr(&arr[index], &arr[temp]);
+            heapify(siz, temp);
+        }
+    }
+public:
+    void add(T data){
         if(usedSize >= arrSize){
             expand();
             add(data);
@@ -70,6 +85,16 @@ public:
         }
         cout<<endl;
     }
+
+    void heapSort(){
+        for(int i = usedSize / 2 - 1; i >= 0; i--){
+            heapify(usedSize, i);
+        }
+        for(int i = usedSize - 1; i > 0; i--){
+            swapPtr(&arr[0], &arr[i]);
+            heapify(i, 0);
+        }
+    }
 };
 
 int main()
@@ -83,5 +108,10 @@ int main()
     test.add(9);
     test.add(9);
     test.print();
+
+    test.heapSort();
+
+    test.print();
+
     return 0;
 }
